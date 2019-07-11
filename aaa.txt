@@ -1,20 +1,63 @@
-{
-	"trace":
-	{
-		"clientTransId":"ffef82ff-82a3-463d-82f0-4cd678d2",
-		"clientTimestamp":"20190709083656621"
-	},
-	"data":
-	{
-		"externalTransfer":
-		{
-			"sourceAccountNumber":"0001100012475002",
-			"tranferAmount":100000,
-			"transferDescription":"external",
-			"payeeAccountNumber":"123456789",
-			"payerName":"OPEN API 02",
-			"payeeName":"TEST TEST",
-			"payeeBankId":"01101011"
-		}
-	}
-}
+function resetTable() {
+            $('#lst').html("<thead></thead> <tbody></tbody>");
+        }
+        function buildHeader(obj) {
+            var tr = '<tr>';
+            for (var i = 0; i < Object.keys(obj).length; i++) {
+                tr += '<th style="border: 1px solid black;">' + Object.keys(obj)[i] + '</th>';
+            }
+
+            tr += '</tr>';
+            $('#lst thead').append(tr);
+        }
+        function buildBody(obj) {
+            var tr = buildStringBody(obj, 0);
+
+            $('#lst tbody').append(tr);
+        }
+
+        function buildStringBody(obj, subBD) {
+            if (obj != null) {
+
+                if (subBD > 0) {
+                    var tr = '<ul>';
+                    for (var i = 0; i < Object.keys(obj).length; i++) {
+                        if (typeof obj[Object.keys(obj)[i]] === 'object') {
+                            tr += buildStringBody(obj[Object.keys(obj)[i]], 1);
+                        }
+                        else {
+                            if (isNaN(obj[Object.keys(obj)[i]]) && obj[Object.keys(obj)[i]].indexOf('Date(') >= 0) {
+                                var ts = obj[Object.keys(obj)[i]].replace('/Date(', '').replace(')/', '');
+                                var date = new Date(Number(ts));
+                                tr += '<li>' + Object.keys(obj)[i] + ": " + date.getDay() + "-" + date.getMonth() + "-" + date.getFullYear() + '</li>';
+                            }
+                            else {
+                                tr += '<li>' + Object.keys(obj)[i] + ": " + obj[Object.keys(obj)[i]] + '</li>';
+                            }
+                        }
+                    }
+                    tr += '</ul>';
+                    return tr;
+                }
+                else {
+                    var tr = '<tr>';
+                    for (var i = 0; i < Object.keys(obj).length; i++) {
+                        if (typeof obj[Object.keys(obj)[i]] === 'object') {
+                            tr += '<td style="border: 1px solid black;">' + buildStringBody(obj[Object.keys(obj)[i]], 1) + '</td>';
+                        }
+                        else {
+                            if (isNaN(obj[Object.keys(obj)[i]]) && obj[Object.keys(obj)[i]].indexOf('Date(') >= 0) {
+                                var ts = obj[Object.keys(obj)[i]].replace('/Date(', '').replace(')/', '');
+                                var date = new Date(Number(ts));
+                                tr += '<td style="border: 1px solid black;">' + date.getDay() + "-" + date.getMonth() + "-" + date.getFullYear() + '</td>';
+                            }
+                            else {
+                                tr += '<td style="border: 1px solid black;">' + obj[Object.keys(obj)[i]] + '</td>';
+                            }
+                        }
+                    }
+                    tr += '</tr>';
+                    return tr;
+                }
+            }
+        }
